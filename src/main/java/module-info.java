@@ -10,6 +10,7 @@ module org.example.laboratoire5 {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     exports org.example.laboratoire5.view;
     opens org.example.laboratoire5.view to javafx.fxml;
