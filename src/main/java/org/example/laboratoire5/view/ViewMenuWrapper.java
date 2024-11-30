@@ -28,7 +28,7 @@ public class ViewMenuWrapper extends BorderPane {
         Menu menuFichier = new Menu("Fichier") {{
             getItems().addAll(
                     createMenuItem("Sauvegarder", "save"),
-                    createMenuItem("Ouvrir image", "openImage")
+                    createMenuItem("Ouvrir image", "openImage", e -> controller.openNewImage())
             );
         }};
 

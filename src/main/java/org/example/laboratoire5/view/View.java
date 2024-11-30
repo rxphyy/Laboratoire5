@@ -24,17 +24,17 @@ abstract class View extends StackPane implements Observer {
 
     public abstract void update(Observable o, Object arg);
 
-    private void redraw() {
-        this.getChildren().clear();
+    public abstract void redraw();
 
-        for (Perspective perspective : perspectives) {
-            if (perspective instanceof Zoom) {
-                this.setScaleX(((Zoom) perspective).getScaleFactor());
-                this.setScaleY(((Zoom) perspective).getScaleFactor());
-            }
-        }
+    public void addPerspective(Perspective perspective) {
+        this.perspectives.add(perspective);
+    }
 
-        ImageView imageView = new ImageView(image.getSourcePath());
-        this.getChildren().add(imageView);
+    public Image getImage() {
+        return image;
+    }
+
+    public List<Perspective> getPerspectives() {
+        return perspectives;
     }
 }

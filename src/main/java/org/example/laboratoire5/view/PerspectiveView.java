@@ -41,6 +41,22 @@ public class PerspectiveView extends View {
 
     }
 
+    @Override
+    public void redraw() {
+        for (Perspective perspective : super.getPerspectives()) {
+            if (perspective instanceof Zoom) {
+                System.out.println(((Zoom) perspective).getScaleFactor());
+                this.setScaleX(((Zoom) perspective).getScaleFactor());
+                this.setScaleY(((Zoom) perspective).getScaleFactor());
+            }
+        }
+    }
+
+    public void addPerspective(Perspective perspective) {
+        super.getPerspectives().add(perspective);
+        redraw();
+    }
+
     private void updateImage(String sourcePath) {
         try {
             javafx.scene.image.Image fxImage = new javafx.scene.image.Image(getClass().getResourceAsStream("/" + sourcePath));

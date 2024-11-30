@@ -19,8 +19,9 @@ public class ThumbnailView extends View {
         imageView.setFitHeight(100);
         imageView.setPreserveRatio(true);
 
-
         StackPane container = new StackPane(imageView);
+
+        container.setMaxWidth(imageView.getFitWidth());
         container.setBorder(new Border(new BorderStroke(
                 Color.BLACK,
                 BorderStrokeStyle.SOLID,
@@ -35,13 +36,19 @@ public class ThumbnailView extends View {
 
     @Override
     public void update(Observable o, Object arg) {
-
+        redraw();
     }
 
-    private void updateImage(String sourcePath) {
+    @Override
+    public void redraw() {
+        // TODO: Juste redraw l'image.
+    }
+
+    public void updateImage(String sourcePath) {
         try {
             javafx.scene.image.Image fxImage = new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/" + sourcePath)));
             imageView.setImage(fxImage);
+            redraw();
         } catch (Exception e) {
             System.err.println("Error loading image: '" + sourcePath + "'.");
         }
