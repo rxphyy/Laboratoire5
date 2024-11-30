@@ -1,5 +1,7 @@
 package org.example.laboratoire5.model;
 
-public interface Perspective {
+import org.example.laboratoire5.view.View;
 
+public interface Perspective {
+    void addObserver(View view);
 }

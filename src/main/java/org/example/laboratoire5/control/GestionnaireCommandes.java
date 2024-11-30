@@ -17,11 +17,16 @@ public class GestionnaireCommandes {
         return gestionnaireCommandes;
     }
 
-    public static void executeCommand(Commande commande) {
+    public void executeCommand(Commande commande) {
+        commande.executeCommand();
+        this.addCommande(commande);
+    }
+
+    public void undo() {
 
     }
 
-    public static void undo() {
-
+    private void addCommande(Commande commande) {
+        this.commandes.add(commande);
     }
 }

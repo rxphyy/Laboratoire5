@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-abstract class View extends StackPane implements Observer {
+public abstract class View extends StackPane implements Observer {
     private Image image;
     private List<Perspective> perspectives;
 
