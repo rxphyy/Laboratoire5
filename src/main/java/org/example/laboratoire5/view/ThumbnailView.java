@@ -4,9 +4,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.example.laboratoire5.model.Image;
+import org.example.laboratoire5.model.Perspective;
 
 import java.util.Objects;
-import java.util.Observable;
 
 public class ThumbnailView extends View {
     private final ImageView imageView;
@@ -35,13 +35,13 @@ public class ThumbnailView extends View {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        redraw();
+    public void redraw() {
+        // TODO: Juste redraw l'image.
     }
 
     @Override
-    public void redraw() {
-        // TODO: Juste redraw l'image.
+    public void update(Perspective perspective) {
+        System.out.println("idk");
     }
 
     public void updateImage(String sourcePath) {
@@ -50,7 +50,7 @@ public class ThumbnailView extends View {
             imageView.setImage(fxImage);
             redraw();
         } catch (Exception e) {
-            System.err.println("Error loading image: '" + sourcePath + "'.");
+            Application.Log.severe("Error loading image: '" + sourcePath + "'.");
         }
     }
 }

@@ -1,7 +1,5 @@
 package org.example.laboratoire5.view;
 
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.example.laboratoire5.model.Image;
 import org.example.laboratoire5.model.Perspective;
@@ -9,10 +7,11 @@ import org.example.laboratoire5.model.Zoom;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
-public abstract class View extends StackPane implements Observer {
+public abstract class View extends StackPane {
+    public static final double MIN_ZOOM = 0.1;
+    public static final double MAX_ZOOM = 5.0;
+
     private Image image;
     private List<Perspective> perspectives;
 
@@ -22,19 +21,29 @@ public abstract class View extends StackPane implements Observer {
         image.addObserver(this);
     }
 
-    public abstract void update(Observable o, Object arg);
-
     public abstract void redraw();
 
     public void addPerspective(Perspective perspective) {
         this.perspectives.add(perspective);
+        perspective.addObserver(this);
+    }
+
+    public void removePerspective(Perspective perspective) {
+        perspective.removeObserver(this);
+        this.perspectives.remove(perspective);
     }
 
     public Image getImage() {
         return image;
     }
 
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
     public List<Perspective> getPerspectives() {
         return perspectives;
     }
+
+    public abstract void update(Perspective perspective);
 }

@@ -20,7 +20,16 @@ public class Translatation extends Observable implements Perspective {
         this.observers.add(view);
     }
 
+    @Override
+    public void removeObserver(View view) {
+        this.observers.remove(view);
+    }
+
     public double getMovementValue() {
         return movementValue;
+    }
+
+    public void setMovementValue(double movementValue) {
+        this.movementValue = movementValue;
     }
 }

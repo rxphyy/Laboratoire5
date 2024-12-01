@@ -15,41 +15,56 @@ import java.util.List;
 import java.util.Observable;
 
 public class PerspectiveView extends View {
+    private double currentScale = 1.0;
     private ImageView imageView;
-    private Image image;
 
     public PerspectiveView(Image image) {
         super(image);
-        this.image = image;
 
         Group group = updateImage(image.getSourcePath());
-
         this.getChildren().add(group);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        System.out.println("UPDATE!!!");
-        redraw();
     }
 
     @Override
     public void redraw() {
         this.getChildren().clear();
-        this.getChildren().add(updateImage(image.getSourcePath()));
+        this.getChildren().add(updateImage(super.getImage().getSourcePath()));
         for (Perspective perspective : super.getPerspectives()) {
-            if (perspective instanceof Zoom) {
-                System.out.println(((Zoom) perspective).getScaleFactor());
-
-                imageView.setFitWidth(imageView.getFitWidth() * ((Zoom) perspective).getScaleFactor());
-                imageView.setFitHeight(imageView.getFitHeight() * ((Zoom) perspective).getScaleFactor());
-            }
+            drawPerspective(perspective);
         }
+    }
+
+    @Override
+    public void update(Perspective perspective) {
+        drawPerspective(perspective);
+    }
+
+    private void drawPerspective(Perspective perspective) {
+        if (perspective instanceof Zoom)
+            applyZoom((Zoom) perspective);
+        else
+            applyTranslate((Translatation) perspective);
+    }
+
+    private void applyZoom(Zoom zoom) {
+        double newScale = currentScale * zoom.getScaleFactor();
+
+        if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
+            imageView.setFitWidth(imageView.getFitWidth() * (newScale / currentScale));
+            imageView.setFitHeight(imageView.getFitHeight() * (newScale / currentScale));
+            currentScale = newScale;
+        } else {
+            Application.Log.info("Zoom limit reached.");
+        }
+    }
+
+    private void applyTranslate(Translatation translatation) {
+        System.out.println("Applied translate");
     }
 
     public void addPerspective(Perspective perspective) {
         super.getPerspectives().add(perspective);
-        redraw();
+        drawPerspective(perspective);
     }
 
     private Group updateImage(String sourcePath) {
@@ -68,15 +83,22 @@ public class PerspectiveView extends View {
 
             imageView.setFitWidth(scaledWidth);
             imageView.setFitHeight(scaledHeight);
+
+            this.setMinWidth(scaledWidth);
+            this.setMinHeight(scaledHeight);
             Group group = new Group(imageView);
             group.setClip(new Rectangle(scaledWidth, scaledHeight));
 
             imageView.setClip(new Rectangle(scaledWidth, scaledHeight));
             return group;
         } catch (Exception e) {
-            System.err.println("Error loading image: " + sourcePath);
+            Application.Log.severe("Error loading image: " + sourcePath);
         }
 
         return null;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
     }
 }

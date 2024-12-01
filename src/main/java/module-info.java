@@ -11,6 +11,7 @@ module org.example.laboratoire5 {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires java.logging;
 
     exports org.example.laboratoire5.view;
     opens org.example.laboratoire5.view to javafx.fxml;

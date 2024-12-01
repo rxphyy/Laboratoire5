@@ -8,10 +8,11 @@ import java.util.Observable;
 
 public class Zoom extends Observable implements Perspective {
     private List<View> observers;
-    private double scaleFactor = 1.0;
+    private double scaleFactor;
 
-    public Zoom() {
+    public Zoom(double scaleFactor) {
         this.observers = new ArrayList<>();
+        this.scaleFactor = scaleFactor;
     }
 
     public double getScaleFactor() {
@@ -20,12 +21,22 @@ public class Zoom extends Observable implements Perspective {
 
     public void setScaleFactor(double scaleFactor) {
         this.scaleFactor = scaleFactor;
-        setChanged();
-        notifyObservers();
+        this.notifyObservers();
     }
 
     @Override
     public void addObserver(View view) {
         this.observers.add(view);
+    }
+
+    @Override
+    public void removeObserver(View view) {
+        this.observers.remove(view);
+    }
+
+    public void notifyObservers() {
+        for (View observer : observers) {
+            observer.update(this);
+        }
     }
 }
