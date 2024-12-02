@@ -1,30 +1,36 @@
 package org.example.laboratoire5.control;
 
 import org.example.laboratoire5.model.Perspective;
-import org.example.laboratoire5.model.Translatation;
+import org.example.laboratoire5.model.Translation;
+import org.example.laboratoire5.view.Application;
 import org.example.laboratoire5.view.View;
 
 public class TranslationCommand extends Commande {
     private View view;
-    private double translate;
-    private TranslateDirection direction;
+    private Perspective translatePerspective;
+    private double translateX;
+    private double translateY;
 
-    public TranslationCommand(View view, double translate, TranslateDirection direction) {
+    public TranslationCommand(View view, double translateX, double translateY) {
         this.view = view;
-        this.translate = translate;
-        this.direction = direction;
+        this.translateX = translateX;
+        this.translateY = translateY;
     }
 
     @Override
     void executeCommand() {
-        Perspective perspective = new Translatation(translate);
-        perspective.addObserver(view);
-        view.addPerspective(perspective);
-        ((Translatation) perspective).setMovementValue(translate);
+        translatePerspective = new Translation(translateX, translateY);
+        translatePerspective.addObserver(this.view);
+        this.view.addPerspective(translatePerspective);
     }
 
     @Override
     void undoCommand() {
-
+        if (translatePerspective != null) {
+            this.view.removePerspective(translatePerspective);
+            this.view.redraw();
+        } else {
+            Application.Log.warning("No translate command to undo.");
+        }
     }
 }

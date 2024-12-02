@@ -2,17 +2,11 @@ package org.example.laboratoire5.view;
 
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import org.example.laboratoire5.model.Image;
 import org.example.laboratoire5.model.Perspective;
-import org.example.laboratoire5.model.Translatation;
+import org.example.laboratoire5.model.Translation;
 import org.example.laboratoire5.model.Zoom;
-
-import java.util.List;
-import java.util.Observable;
 
 public class PerspectiveView extends View {
     private double currentScale = 1.0;
@@ -23,6 +17,28 @@ public class PerspectiveView extends View {
 
         Group group = updateImage(image.getSourcePath());
         this.getChildren().add(group);
+    }
+
+    public void enableMouseDrag(Controller controller) {
+        final double[] mouseAnchorX = new double[1];
+        final double[] mouseAnchorY = new double[1];
+
+        this.setOnMousePressed(event -> {
+            mouseAnchorX[0] = event.getSceneX();
+            mouseAnchorY[0] = event.getSceneY();
+        });
+
+        this.setOnMouseDragged(event -> {
+            double deltaX = event.getSceneX() - mouseAnchorX[0];
+            double deltaY = event.getSceneY() - mouseAnchorY[0];
+
+            // Reset anchors for next drag calculation
+            mouseAnchorX[0] = event.getSceneX();
+            mouseAnchorY[0] = event.getSceneY();
+
+            // Trigger translation command
+            controller.executeTranslate(this, deltaX, deltaY);
+        });
     }
 
     @Override
@@ -43,7 +59,7 @@ public class PerspectiveView extends View {
         if (perspective instanceof Zoom)
             applyZoom((Zoom) perspective);
         else
-            applyTranslate((Translatation) perspective);
+            applyTranslate((Translation) perspective);
     }
 
     private void applyZoom(Zoom zoom) {
@@ -58,8 +74,13 @@ public class PerspectiveView extends View {
         }
     }
 
-    private void applyTranslate(Translatation translatation) {
-        System.out.println("Applied translate");
+    private void applyTranslate(Translation translation) {
+        System.out.println("Before: X=" + imageView.getLayoutX() + ", Y=" + imageView.getLayoutY());
+
+        imageView.setLayoutX(imageView.getLayoutX() - translation.getTranslateX());
+        imageView.setLayoutY(imageView.getLayoutY() - translation.getTranslateY());
+
+        System.out.println("After: X=" + imageView.getLayoutX() + ", Y=" + imageView.getLayoutY());
     }
 
     public void addPerspective(Perspective perspective) {
@@ -70,7 +91,7 @@ public class PerspectiveView extends View {
     private Group updateImage(String sourcePath) {
         try {
             imageView = new ImageView();
-            javafx.scene.image.Image fxImage = new javafx.scene.image.Image(getClass().getResourceAsStream("/" + sourcePath));
+            javafx.scene.image.Image fxImage = new javafx.scene.image.Image(sourcePath);
             imageView.setImage(fxImage);
             imageView.setPreserveRatio(true);
 

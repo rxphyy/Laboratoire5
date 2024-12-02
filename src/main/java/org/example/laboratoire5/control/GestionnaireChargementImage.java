@@ -5,8 +5,21 @@ import org.example.laboratoire5.view.Application;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class GestionnaireChargementImage {
+    private Deque<Image> imageHistory = new LinkedList<>();
+
+    public void addToImageHistory(Image image){
+        imageHistory.push(image);
+    }
+
+    public Image removeFromImageHistory() {
+        if (!imageHistory.isEmpty())
+            return imageHistory.pop();
+        return null;
+    }
 
     public Image selectImageFromFileExplorer() {
         JFileChooser fileChooser = new JFileChooser();

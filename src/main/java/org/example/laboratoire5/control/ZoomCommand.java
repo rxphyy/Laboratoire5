@@ -18,16 +18,15 @@ public class ZoomCommand extends Commande {
     @Override
     void executeCommand() {
         zoomPerspective = new Zoom(zoomValue);
-        zoomPerspective.addObserver(view);
-        view.addPerspective(zoomPerspective);
+        zoomPerspective.addObserver(this.view);
+        this.view.addPerspective(zoomPerspective);
     }
 
     @Override
     void undoCommand() {
         if (zoomPerspective != null) {
-            // Remove the last zoom perspective from the view
-            view.removePerspective(zoomPerspective);
-            view.redraw();  // Redraw the view after removing the perspective
+            this.view.removePerspective(zoomPerspective);
+            this.view.redraw();
         } else {
             Application.Log.warning("No zoom command to undo.");
         }

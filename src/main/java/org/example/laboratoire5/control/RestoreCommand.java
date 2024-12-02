@@ -2,17 +2,18 @@ package org.example.laboratoire5.control;
 
 import org.example.laboratoire5.view.View;
 
-public class SaveCommand extends Commande {
+public class RestoreCommand extends Commande {
     private GestionnaireSauvegarde gestionnaireSauvegarde;
     private View view;
 
-    public SaveCommand(View view) {
+    public RestoreCommand(View view) {
         this.gestionnaireSauvegarde = new GestionnaireSauvegarde();
+        this.view = view;
     }
 
     @Override
     void executeCommand() {
-        gestionnaireSauvegarde.saveState(view);
+        gestionnaireSauvegarde.loadState(view);
     }
 
     @Override
