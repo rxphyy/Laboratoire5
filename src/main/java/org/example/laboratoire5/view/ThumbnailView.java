@@ -1,5 +1,6 @@
 package org.example.laboratoire5.view;
 
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -14,14 +15,7 @@ public class ThumbnailView extends View {
         getImageView().setFitHeight(100);
 
         StackPane container = new StackPane(getImageView());
-
-        container.setMaxWidth(getImageView().getFitWidth());
-        container.setBorder(new Border(new BorderStroke(
-                Color.BLACK,
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(0),
-                new BorderWidths(3)
-        )));
+        this.setMaxWidth(this.getImageView().getFitWidth());
 
         this.getChildren().add(container);
         updateImage(image.getSourcePath());
@@ -42,6 +36,7 @@ public class ThumbnailView extends View {
         try {
             javafx.scene.image.Image fxImage = new javafx.scene.image.Image(sourcePath);
             getImageView().setImage(fxImage);
+            getImageView().setStyle("-fx-border-color: blue; -fx-border-width: 5px;");
             return getImageView();
         } catch (Exception e) {
             Application.Log.severe("Error loading image: '" + sourcePath + "'.");

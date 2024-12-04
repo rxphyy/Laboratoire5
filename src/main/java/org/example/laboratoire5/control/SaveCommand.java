@@ -1,12 +1,14 @@
 package org.example.laboratoire5.control;
 
 import org.example.laboratoire5.view.View;
+import org.example.laboratoire5.view.ViewMenuWrapper;
 
 public class SaveCommand extends Commande {
     private GestionnaireSauvegarde gestionnaireSauvegarde;
-    private View view;
+    private ViewMenuWrapper view;
 
-    public SaveCommand(View view) {
+    public SaveCommand(ViewMenuWrapper view) {
+        this.view = view;
         this.gestionnaireSauvegarde = new GestionnaireSauvegarde();
     }
 
@@ -17,6 +19,5 @@ public class SaveCommand extends Commande {
 
     @Override
     void undoCommand() {
-        gestionnaireSauvegarde.undo(view);
     }
 }

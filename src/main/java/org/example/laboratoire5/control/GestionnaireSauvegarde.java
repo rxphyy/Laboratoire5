@@ -2,6 +2,7 @@ package org.example.laboratoire5.control;
 
 import org.example.laboratoire5.view.Application;
 import org.example.laboratoire5.view.View;
+import org.example.laboratoire5.view.ViewMenuWrapper;
 
 import javax.swing.*;
 import java.io.*;
@@ -14,20 +15,15 @@ public class GestionnaireSauvegarde {
         this.history = new Stack<>();
     }
 
-    public void saveState(View view) {
+    public void saveState(ViewMenuWrapper view) {
         Memento memento = new Memento(view);
         history.push(memento);
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("savefile.ser"))) {
-            out.writeObject(memento);
-            System.out.println("State saved.");
-        } catch (IOException e) {
-            System.err.println("Error saving state: " + e.getMessage());
-        }
-    }
 
-    public void loadState(View view) {
+        File selectedFile;
+
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select a Saved View File");
+        fileChooser.setDialogTitle("Select Location to Save the File");
+        fileChooser.setSelectedFile(new File("serializedObject.ser"));
         fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -40,31 +36,31 @@ public class GestionnaireSauvegarde {
             }
         });
 
-        int returnValue = fileChooser.showOpenDialog(null);
+        String userHome = System.getenv("USERPROFILE");
+        File initialFolder = new File(userHome + File.separator + "Documents");
+        if (initialFolder.exists() && initialFolder.isDirectory()) {
+            fileChooser.setCurrentDirectory(initialFolder);
+        } else {
+            Application.Log.warning("Default folder does not exist. Using system default.");
+        }
+
+        int returnValue = fileChooser.showSaveDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(selectedFile))) {
-                Memento memento = (Memento) in.readObject();
-                // Apply the deserialized state to the View
-                view.setImage(memento.getState().getImage());
-                view.redraw();
-                System.out.println("State loaded successfully.");
-            } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error loading state: " + e.getMessage());
+            selectedFile = fileChooser.getSelectedFile();
+
+            // Ensure the file has the ".ser" extension
+            if (!selectedFile.getName().toLowerCase().endsWith(".ser")) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + ".ser");
+            }
+
+            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(selectedFile))) {
+                out.writeObject(memento);
+                System.out.println("State saved to: " + selectedFile.getAbsolutePath());
+            } catch (IOException e) {
+                System.err.println("Error saving state: " + e.getMessage());
             }
         } else {
-            Application.Log.warning("File selection canceled.");
-        }
-    }
-
-    public void undo(View view) {
-        if (!history.isEmpty()) {
-            Memento memento = history.pop();
-            view.setImage(memento.getState().getImage());
-            view.redraw();
-            System.out.println("Undo successful.");
-        } else {
-            System.out.println("No previous state to undo.");
+            Application.Log.warning("Save operation canceled.");
         }
     }
 }

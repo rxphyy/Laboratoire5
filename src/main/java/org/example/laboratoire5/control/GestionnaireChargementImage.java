@@ -26,7 +26,7 @@ public class GestionnaireChargementImage {
         String userHome = System.getenv("USERPROFILE");
         File initialFolder = new File(userHome + File.separator + "Pictures");
 
-        if (initialFolder != null && initialFolder.exists() && initialFolder.isDirectory()) {
+        if (initialFolder.exists() && initialFolder.isDirectory()) {
             fileChooser.setCurrentDirectory(initialFolder);
         } else {
             Application.Log.warning("Start folder does not exist or is not a directory. Using default.");

@@ -1,18 +1,19 @@
 package org.example.laboratoire5.view;
 
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import org.example.laboratoire5.model.Image;
 import org.example.laboratoire5.model.Perspective;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class View extends StackPane {
+public abstract class View extends Pane implements Serializable {
     public static final double MIN_ZOOM = 0.1;
     public static final double MAX_ZOOM = 5.0;
 
-    private ImageView imageView;
+    private transient ImageView imageView;
     private Image image;
     private List<Perspective> perspectives;
 
@@ -21,7 +22,9 @@ public abstract class View extends StackPane {
         this.perspectives = new ArrayList<>();
 
         this.imageView = new ImageView();
-        imageView.setPreserveRatio(true);
+        this.imageView.setPreserveRatio(true);
+
+        this.setStyle("-fx-border-color: red; -fx-border-width: 5; -fx-border-style: solid outside;");
 
         image.addObserver(this);
     }

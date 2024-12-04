@@ -33,4 +33,8 @@ public class TranslationCommand extends Commande {
             Application.Log.warning("No translate command to undo.");
         }
     }
+
+    public double getTranslateX() {
+        return translateX;
+    }
 }

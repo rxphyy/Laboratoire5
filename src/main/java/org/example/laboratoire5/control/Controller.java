@@ -1,6 +1,7 @@
-package org.example.laboratoire5.view;
+package org.example.laboratoire5.control;
 
-import org.example.laboratoire5.control.*;
+import org.example.laboratoire5.view.View;
+import org.example.laboratoire5.view.ViewMenuWrapper;
 
 import java.util.List;
 
@@ -27,15 +28,15 @@ public class Controller {
         this.gestionnaireCommandes.executeCommand(new OpenImageCommand(views));
     }
 
-    public void executeSave(View view) {
+    public void executeSave(ViewMenuWrapper view) {
         this.gestionnaireCommandes.executeCommand(new SaveCommand(view));
-    }
-
-    public void executeRestore(View view) {
-        this.gestionnaireCommandes.executeCommand(new RestoreCommand(view));
     }
 
     public void executeUndo() {
         this.gestionnaireCommandes.undo();
+    }
+
+    public void executeRedo() {
+        this.gestionnaireCommandes.redo();
     }
 }

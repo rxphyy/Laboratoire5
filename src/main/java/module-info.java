@@ -15,4 +15,6 @@ module org.example.laboratoire5 {
 
     exports org.example.laboratoire5.view;
     opens org.example.laboratoire5.view to javafx.fxml;
+    exports org.example.laboratoire5.control;
+    opens org.example.laboratoire5.control to javafx.fxml;
 }

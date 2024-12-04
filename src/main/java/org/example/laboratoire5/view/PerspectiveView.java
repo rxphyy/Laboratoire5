@@ -1,22 +1,17 @@
 package org.example.laboratoire5.view;
 
-import javafx.scene.Group;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.StackPane;
+import org.example.laboratoire5.control.Controller;
 import org.example.laboratoire5.model.Image;
 import org.example.laboratoire5.model.Perspective;
 import org.example.laboratoire5.model.Translation;
 import org.example.laboratoire5.model.Zoom;
 
 public class PerspectiveView extends View {
-    private double currentScale = 1.0;
-    private ImageView imageView;
-
     public PerspectiveView(Image image) {
         super(image);
-
-        Group group = updateImage(image.getSourcePath());
-        this.getChildren().add(group);
+        this.getChildren().add(updateImage(image.getSourcePath()));
     }
 
     public void enableMouseDrag(Controller controller) {
@@ -32,11 +27,8 @@ public class PerspectiveView extends View {
             double deltaX = event.getSceneX() - mouseAnchorX[0];
             double deltaY = event.getSceneY() - mouseAnchorY[0];
 
-            // Reset anchors for next drag calculation
             mouseAnchorX[0] = event.getSceneX();
             mouseAnchorY[0] = event.getSceneY();
-
-            // Trigger translation command
             controller.executeTranslate(this, deltaX, deltaY);
         });
     }
@@ -63,24 +55,14 @@ public class PerspectiveView extends View {
     }
 
     private void applyZoom(Zoom zoom) {
-        double newScale = currentScale * zoom.getScaleFactor();
-
-        if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
-            imageView.setFitWidth(imageView.getFitWidth() * (newScale / currentScale));
-            imageView.setFitHeight(imageView.getFitHeight() * (newScale / currentScale));
-            currentScale = newScale;
-        } else {
-            Application.Log.info("Zoom limit reached.");
-        }
+        getImageView().setFitWidth(getImageView().getFitWidth() * zoom.getScaleFactor());
+        getImageView().setFitHeight(getImageView().getFitHeight() * zoom.getScaleFactor());
     }
 
+
     private void applyTranslate(Translation translation) {
-        System.out.println("Before: X=" + imageView.getLayoutX() + ", Y=" + imageView.getLayoutY());
-
-        imageView.setLayoutX(imageView.getLayoutX() - translation.getTranslateX());
-        imageView.setLayoutY(imageView.getLayoutY() - translation.getTranslateY());
-
-        System.out.println("After: X=" + imageView.getLayoutX() + ", Y=" + imageView.getLayoutY());
+        getImageView().setLayoutX(getImageView().getLayoutX() + translation.getTranslateX());
+        getImageView().setLayoutY(getImageView().getLayoutY() + translation.getTranslateY());
     }
 
     public void addPerspective(Perspective perspective) {
@@ -88,38 +70,29 @@ public class PerspectiveView extends View {
         drawPerspective(perspective);
     }
 
-    private Group updateImage(String sourcePath) {
+    private ImageView updateImage(String sourcePath) {
         try {
-            imageView = new ImageView();
+            getImageView().setLayoutX(0);
+            getImageView().setLayoutY(0);
             javafx.scene.image.Image fxImage = new javafx.scene.image.Image(sourcePath);
-            imageView.setImage(fxImage);
-            imageView.setPreserveRatio(true);
+            getImageView().setImage(fxImage);
+            getImageView().setPreserveRatio(true);
 
             double imageWidth = fxImage.getWidth();
             double imageHeight = fxImage.getHeight();
 
-            double scale = Math.min(500 / imageWidth, 500 / imageHeight);
-            double scaledWidth = imageWidth * scale;
-            double scaledHeight = imageHeight * scale;
+            double scale = Math.min(800 / imageWidth, 500 / imageHeight);
+            double scaledWidth = (imageWidth * scale);
+            double scaledHeight = (imageHeight * scale);
 
-            imageView.setFitWidth(scaledWidth);
-            imageView.setFitHeight(scaledHeight);
+            getImageView().setFitWidth(scaledWidth);
+            getImageView().setFitHeight(scaledHeight);
 
-            this.setMinWidth(scaledWidth);
-            this.setMinHeight(scaledHeight);
-            Group group = new Group(imageView);
-            group.setClip(new Rectangle(scaledWidth, scaledHeight));
-
-            imageView.setClip(new Rectangle(scaledWidth, scaledHeight));
-            return group;
+            return getImageView();
         } catch (Exception e) {
             Application.Log.severe("Error loading image: " + sourcePath);
         }
 
         return null;
-    }
-
-    public ImageView getImageView() {
-        return imageView;
     }
 }
